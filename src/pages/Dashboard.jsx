@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlayIcon, StopIcon } from 'lucide-react';
+import { Play, Square } from 'lucide-react';
 
 const Dashboard = () => {
   // Mock data for open trades
@@ -95,7 +95,7 @@ const Dashboard = () => {
                 variant={status ? 'destructive' : 'default'}
                 className={status ? 'bg-red-500' : 'bg-green-500'}
               >
-                {status ? <StopIcon className="mr-2" /> : <PlayIcon className="mr-2" />}
+                {status ? <Square className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
                 {status ? 'Stop' : 'Start'}
               </Button>
             </div>
