@@ -1,35 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Square, Moon, Sun } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTheme } from 'next-themes';
 
+// Mock API function to fetch open trades
+const fetchOpenTrades = async () => {
+  // In a real application, this would be an API call
+  return [
+    { id: 1, exchange: 'Binance', pair: 'BTCUSDT', type: 'long', size: '1.0000', entryPrice: 50000, currentPrice: Math.random() * (52000 - 49000) + 49000, leverage: '10x' },
+    { id: 2, exchange: 'Binance', pair: 'ETHUSDT', type: 'short', size: '10.0000', entryPrice: 3000, currentPrice: Math.random() * (3100 - 2900) + 2900, leverage: '5x' },
+    { id: 3, exchange: 'Coinbase', pair: 'BTCUSD', type: 'long', size: '0.5000', entryPrice: 51000, currentPrice: Math.random() * (52000 - 49000) + 49000, leverage: '3x' },
+  ].map(trade => ({
+    ...trade,
+    profit: (trade.currentPrice - trade.entryPrice) * (trade.type === 'long' ? 1 : -1) * parseFloat(trade.size),
+    profitPercentage: ((trade.currentPrice - trade.entryPrice) / trade.entryPrice) * 100 * (trade.type === 'long' ? 1 : -1),
+  }));
+};
+
 const Dashboard = () => {
   const { theme, setTheme } = useTheme();
-  const [openTrades, setOpenTrades] = useState([
-    { id: 1, exchange: 'Binance', pair: 'BTCUSDT', type: 'long', size: '1.0000', entryPrice: 50000, currentPrice: 51000, profit: 100, profitPercentage: 2, leverage: '10x' },
-    { id: 2, exchange: 'Binance', pair: 'BTCUSDT', type: 'short', size: '0.6375', entryPrice: 59052.1, currentPrice: 59049.8, profit: 0.87, profitPercentage: 0.02, leverage: '5x' },
-  ]);
+  const { data: openTrades = [], refetch } = useQuery({
+    queryKey: ['openTrades'],
+    queryFn: fetchOpenTrades,
+    refetchInterval: 5000, // Refetch every 5 seconds
+  });
 
-  const [botStatus, setBotStatus] = useState({
+  const [botStatus, setBotStatus] = React.useState({
     Binance: true,
     Coinbase: false,
   });
 
-  const handleCloseTrade = (id) => {
+  const handleCloseTrade = async (id) => {
     console.log(`Closing trade with id: ${id}`);
-    setOpenTrades(openTrades.filter(trade => trade.id !== id));
+    // In a real application, you would make an API call here
+    // After successful API call, refetch the data
+    await refetch();
   };
 
-  const handleCloseAllTradesForExchange = (exchange) => {
+  const handleCloseAllTradesForExchange = async (exchange) => {
     console.log(`Closing all trades for ${exchange}`);
-    setOpenTrades(openTrades.filter(trade => trade.exchange !== exchange));
+    // In a real application, you would make an API call here
+    // After successful API call, refetch the data
+    await refetch();
   };
 
-  const handleCloseAllTrades = () => {
+  const handleCloseAllTrades = async () => {
     console.log('Closing all trades');
-    setOpenTrades([]);
+    // In a real application, you would make an API call here
+    // After successful API call, refetch the data
+    await refetch();
   };
 
   const toggleBotStatus = (exchange) => {
