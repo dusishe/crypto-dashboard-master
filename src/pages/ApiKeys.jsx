@@ -3,14 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const ApiKeys = () => {
-  const [apiKeys, setApiKeys] = useState([]);
-  const [newKey, setNewKey] = useState({ exchange: '', key: '', secret: '', mode: 'demo' });
+  const [apiKeys, setApiKeys] = useState([
+    { id: 1, exchange: 'Binance', key: 'abc123def456', secret: '********', password: '********', mode: 'demo' },
+    { id: 2, exchange: 'Coinbase', key: 'xyz789uvw012', secret: '********', password: null, mode: 'live' },
+  ]);
+  const [newKey, setNewKey] = useState({ exchange: '', key: '', secret: '', password: '', mode: 'demo' });
+
+  const exchanges = ['Binance', 'Coinbase', 'Kraken', 'Bitfinex'];
 
   const addApiKey = () => {
     setApiKeys([...apiKeys, { ...newKey, id: Date.now() }]);
-    setNewKey({ exchange: '', key: '', secret: '', mode: 'demo' });
+    setNewKey({ exchange: '', key: '', secret: '', password: '', mode: 'demo' });
   };
 
   const removeApiKey = (id) => {
@@ -27,11 +33,19 @@ const ApiKeys = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <Input
-              placeholder="Exchange"
+            <Select
               value={newKey.exchange}
-              onChange={(e) => setNewKey({...newKey, exchange: e.target.value})}
-            />
+              onValueChange={(value) => setNewKey({...newKey, exchange: value})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select exchange" />
+              </SelectTrigger>
+              <SelectContent>
+                {exchanges.map((exchange) => (
+                  <SelectItem key={exchange} value={exchange}>{exchange}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Input
               placeholder="API Key"
               value={newKey.key}
@@ -42,6 +56,12 @@ const ApiKeys = () => {
               type="password"
               value={newKey.secret}
               onChange={(e) => setNewKey({...newKey, secret: e.target.value})}
+            />
+            <Input
+              placeholder="Password (optional)"
+              type="password"
+              value={newKey.password}
+              onChange={(e) => setNewKey({...newKey, password: e.target.value})}
             />
             <Select
               value={newKey.mode}
@@ -65,16 +85,32 @@ const ApiKeys = () => {
           <CardTitle>Existing API Keys</CardTitle>
         </CardHeader>
         <CardContent>
-          {apiKeys.map((key) => (
-            <div key={key.id} className="flex justify-between items-center mb-2 p-2 border rounded">
-              <div>
-                <p>Exchange: {key.exchange}</p>
-                <p>API Key: {key.key.substring(0, 10)}...</p>
-                <p>Mode: {key.mode}</p>
-              </div>
-              <Button onClick={() => removeApiKey(key.id)} variant="destructive">Remove</Button>
-            </div>
-          ))}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Exchange</TableHead>
+                <TableHead>API Key</TableHead>
+                <TableHead>API Secret</TableHead>
+                <TableHead>Password</TableHead>
+                <TableHead>Mode</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {apiKeys.map((key) => (
+                <TableRow key={key.id}>
+                  <TableCell>{key.exchange}</TableCell>
+                  <TableCell>{key.key.substring(0, 4)}...{key.key.substring(key.key.length - 4)}</TableCell>
+                  <TableCell>********</TableCell>
+                  <TableCell>{key.password ? '********' : 'N/A'}</TableCell>
+                  <TableCell>{key.mode}</TableCell>
+                  <TableCell>
+                    <Button onClick={() => removeApiKey(key.id)} variant="destructive" size="sm">Remove</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>
