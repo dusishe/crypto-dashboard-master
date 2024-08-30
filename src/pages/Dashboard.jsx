@@ -2,9 +2,8 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Square, Moon, Sun } from 'lucide-react';
+import { Play, Square } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useTheme } from 'next-themes';
 
 // Mock API function to fetch open trades
 const fetchOpenTrades = async () => {
@@ -20,12 +19,29 @@ const fetchOpenTrades = async () => {
   }));
 };
 
+// Mock API function to fetch trading signals
+const fetchTradingSignals = async () => {
+  // In a real application, this would be an API call
+  return [
+    { id: 1, exchange: 'Binance', ticker: 'BTCUSDT', recommendation: 'strong_buy' },
+    { id: 2, exchange: 'Binance', ticker: 'ETHUSDT', recommendation: 'sell' },
+    { id: 3, exchange: 'Coinbase', ticker: 'BTCUSD', recommendation: 'neutral' },
+    { id: 4, exchange: 'Coinbase', ticker: 'ETHUSD', recommendation: 'buy' },
+    { id: 5, exchange: 'Binance', ticker: 'ADAUSDT', recommendation: 'strong_sell' },
+  ];
+};
+
 const Dashboard = () => {
-  const { theme, setTheme } = useTheme();
-  const { data: openTrades = [], refetch } = useQuery({
+  const { data: openTrades = [], refetch: refetchTrades } = useQuery({
     queryKey: ['openTrades'],
     queryFn: fetchOpenTrades,
     refetchInterval: 5000, // Refetch every 5 seconds
+  });
+
+  const { data: tradingSignals = [] } = useQuery({
+    queryKey: ['tradingSignals'],
+    queryFn: fetchTradingSignals,
+    refetchInterval: 60000, // Refetch every minute
   });
 
   const [botStatus, setBotStatus] = React.useState({
@@ -37,21 +53,21 @@ const Dashboard = () => {
     console.log(`Closing trade with id: ${id}`);
     // In a real application, you would make an API call here
     // After successful API call, refetch the data
-    await refetch();
+    await refetchTrades();
   };
 
   const handleCloseAllTradesForExchange = async (exchange) => {
     console.log(`Closing all trades for ${exchange}`);
     // In a real application, you would make an API call here
     // After successful API call, refetch the data
-    await refetch();
+    await refetchTrades();
   };
 
   const handleCloseAllTrades = async () => {
     console.log('Closing all trades');
     // In a real application, you would make an API call here
     // After successful API call, refetch the data
-    await refetch();
+    await refetchTrades();
   };
 
   const toggleBotStatus = (exchange) => {
@@ -61,19 +77,49 @@ const Dashboard = () => {
     }));
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+  const getRecommendationColor = (recommendation) => {
+    switch (recommendation) {
+      case 'strong_buy': return 'bg-green-500';
+      case 'buy': return 'bg-green-300';
+      case 'neutral': return 'bg-gray-300';
+      case 'sell': return 'bg-red-300';
+      case 'strong_sell': return 'bg-red-500';
+      default: return 'bg-gray-300';
+    }
+  };
+
+  const getRecommendationText = (recommendation) => {
+    return recommendation.replace('_', ' ').toUpperCase();
   };
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <Button onClick={toggleTheme} variant="outline" size="icon">
-          {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Bot Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {Object.entries(botStatus).map(([exchange, status]) => (
+            <div key={exchange} className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <div className={`w-3 h-3 rounded-full mr-2 ${status ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <span>{exchange}: {status ? 'Running' : 'Stopped'}</span>
+              </div>
+              <Button
+                onClick={() => toggleBotStatus(exchange)}
+                variant={status ? 'destructive' : 'default'}
+                className={status ? 'bg-red-500' : 'bg-green-500'}
+              >
+                {status ? <Square className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+                {status ? 'Stop' : 'Start'}
+              </Button>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       <Card className="mb-4">
         <CardHeader>
           <CardTitle>Open Trades</CardTitle>
@@ -133,36 +179,31 @@ const Dashboard = () => {
 
       <Card className="mb-4">
         <CardHeader>
-          <CardTitle>Bot Status</CardTitle>
+          <CardTitle>Trading Signals</CardTitle>
         </CardHeader>
         <CardContent>
-          {Object.entries(botStatus).map(([exchange, status]) => (
-            <div key={exchange} className="flex items-center justify-between mb-2">
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full mr-2 ${status ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                <span>{exchange}: {status ? 'Running' : 'Stopped'}</span>
-              </div>
-              <Button
-                onClick={() => toggleBotStatus(exchange)}
-                variant={status ? 'destructive' : 'default'}
-                className={status ? 'bg-red-500' : 'bg-green-500'}
-              >
-                {status ? <Square className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-                {status ? 'Stop' : 'Start'}
-              </Button>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent className="flex space-x-2">
-          <Button>Manage API Keys</Button>
-          <Button>Configure Telegram Bot</Button>
-          <Button>View Statistics</Button>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Exchange</TableHead>
+                <TableHead>Ticker</TableHead>
+                <TableHead>Recommendation</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tradingSignals.map((signal) => (
+                <TableRow key={signal.id}>
+                  <TableCell>{signal.exchange}</TableCell>
+                  <TableCell>{signal.ticker}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded ${getRecommendationColor(signal.recommendation)} text-white`}>
+                      {getRecommendationText(signal.recommendation)}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

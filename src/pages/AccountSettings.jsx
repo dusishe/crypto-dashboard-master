@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const AccountSettings = () => {
   const [username, setUsername] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [botToken, setBotToken] = useState('');
+  const [chatId, setChatId] = useState('');
+  const [notifications, setNotifications] = useState({
+    tradeOpened: false,
+    tradeClosed: false,
+    profitThreshold: false,
+    lossThreshold: false,
+  });
 
   const handleUsernameChange = () => {
     console.log('Changing username to:', username);
@@ -21,6 +30,11 @@ const AccountSettings = () => {
     }
     console.log('Changing password');
     // TODO: Implement actual password change logic
+  };
+
+  const handleTelegramSettingsSave = () => {
+    console.log('Saving Telegram settings:', { botToken, chatId, notifications });
+    // TODO: Implement actual save logic for Telegram settings
   };
 
   return (
@@ -43,7 +57,7 @@ const AccountSettings = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="mb-4">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
@@ -68,6 +82,43 @@ const AccountSettings = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <Button onClick={handlePasswordChange}>Change Password</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Telegram Bot Settings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Input
+              placeholder="Bot Token"
+              value={botToken}
+              onChange={(e) => setBotToken(e.target.value)}
+            />
+            <Input
+              placeholder="Chat ID"
+              value={chatId}
+              onChange={(e) => setChatId(e.target.value)}
+            />
+            <div className="space-y-2">
+              {Object.entries(notifications).map(([key, value]) => (
+                <div key={key} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={key}
+                    checked={value}
+                    onCheckedChange={(checked) => 
+                      setNotifications({...notifications, [key]: checked})
+                    }
+                  />
+                  <label htmlFor={key} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <Button onClick={handleTelegramSettingsSave}>Save Telegram Settings</Button>
           </div>
         </CardContent>
       </Card>
