@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Square } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const Dashboard = () => {
-  // Mock data for open trades
   const [openTrades, setOpenTrades] = useState([
-    { id: 1, exchange: 'Binance', pair: 'BTCUSDT', type: 'long', entryPrice: 50000, currentPrice: 51000, profit: 100, profitPercentage: 2, position: 1000 },
-    { id: 2, exchange: 'Coinbase', pair: 'ETHUSDT', type: 'short', entryPrice: 3000, currentPrice: 2950, profit: -50, profitPercentage: -1.67, position: 3000 },
+    { id: 1, exchange: 'Binance', pair: 'BTCUSDT', type: 'long', size: '1.0000', entryPrice: 50000, currentPrice: 51000, profit: 100, profitPercentage: 2, margin: 590.45 },
+    { id: 2, exchange: 'Binance', pair: 'BTCUSDT', type: 'short', size: '0.6375', entryPrice: 59052.1, currentPrice: 59049.8, profit: 0.87, profitPercentage: 0.02, margin: 3764.57 },
   ]);
 
-  // Mock data for bot status
   const [botStatus, setBotStatus] = useState({
     Binance: true,
     Coinbase: false,
@@ -47,35 +46,55 @@ const Dashboard = () => {
           <CardTitle>Open Trades</CardTitle>
         </CardHeader>
         <CardContent>
-          {openTrades.map((trade) => (
-            <div key={trade.id} className="flex justify-between items-center mb-2 p-2 border rounded">
-              <div>
-                <p>Exchange: {trade.exchange}</p>
-                <p>Pair: {trade.pair}</p>
-                <p className={trade.type === 'long' ? 'text-green-500' : 'text-red-500'}>
-                  Type: {trade.type.toUpperCase()}
-                </p>
-                <p>Entry Price: ${trade.entryPrice}</p>
-                <p>Current Price: ${trade.currentPrice}</p>
-                <p className={trade.profit >= 0 ? 'text-green-500' : 'text-red-500'}>
-                  Profit: ${trade.profit} ({trade.profitPercentage}%)
-                </p>
-                <p>Position: ${trade.position}</p>
-              </div>
-              <Button onClick={() => handleCloseTrade(trade.id)} variant="destructive">Close</Button>
-            </div>
-          ))}
-          {Object.keys(botStatus).map(exchange => (
-            <Button 
-              key={exchange}
-              onClick={() => handleCloseAllTradesForExchange(exchange)} 
-              className="mt-2 mr-2" 
-              variant="destructive"
-            >
-              Close All Trades on {exchange}
-            </Button>
-          ))}
-          <Button onClick={handleCloseAllTrades} className="mt-2" variant="destructive">Close All Trades</Button>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Symbol</TableHead>
+                <TableHead>Size</TableHead>
+                <TableHead>Entry Price</TableHead>
+                <TableHead>Market Price</TableHead>
+                <TableHead>PNL (USDT)</TableHead>
+                <TableHead>PNL (%)</TableHead>
+                <TableHead>Margin</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {openTrades.map((trade) => (
+                <TableRow key={trade.id}>
+                  <TableCell className={trade.type === 'long' ? 'text-green-500' : 'text-red-500'}>
+                    {trade.pair} {trade.type.toUpperCase()}
+                  </TableCell>
+                  <TableCell>{trade.size}</TableCell>
+                  <TableCell>{trade.entryPrice.toFixed(1)}</TableCell>
+                  <TableCell>{trade.currentPrice.toFixed(1)}</TableCell>
+                  <TableCell className={trade.profit >= 0 ? 'text-green-500' : 'text-red-500'}>
+                    {trade.profit.toFixed(2)}
+                  </TableCell>
+                  <TableCell className={trade.profitPercentage >= 0 ? 'text-green-500' : 'text-red-500'}>
+                    {trade.profitPercentage.toFixed(2)}%
+                  </TableCell>
+                  <TableCell>{trade.margin.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Button onClick={() => handleCloseTrade(trade.id)} variant="destructive" size="sm">Close</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="mt-4">
+            {Object.keys(botStatus).map(exchange => (
+              <Button 
+                key={exchange}
+                onClick={() => handleCloseAllTradesForExchange(exchange)} 
+                className="mr-2" 
+                variant="destructive"
+              >
+                Close All Trades on {exchange}
+              </Button>
+            ))}
+            <Button onClick={handleCloseAllTrades} variant="destructive">Close All Trades</Button>
+          </div>
         </CardContent>
       </Card>
 
