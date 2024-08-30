@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Square } from 'lucide-react';
+import { Play, Square, Moon, Sun } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useTheme } from 'next-themes';
 
 const Dashboard = () => {
+  const { theme, setTheme } = useTheme();
   const [openTrades, setOpenTrades] = useState([
-    { id: 1, exchange: 'Binance', pair: 'BTCUSDT', type: 'long', size: '1.0000', entryPrice: 50000, currentPrice: 51000, profit: 100, profitPercentage: 2, margin: 590.45 },
-    { id: 2, exchange: 'Binance', pair: 'BTCUSDT', type: 'short', size: '0.6375', entryPrice: 59052.1, currentPrice: 59049.8, profit: 0.87, profitPercentage: 0.02, margin: 3764.57 },
+    { id: 1, exchange: 'Binance', pair: 'BTCUSDT', type: 'long', size: '1.0000', entryPrice: 50000, currentPrice: 51000, profit: 100, profitPercentage: 2, leverage: '10x' },
+    { id: 2, exchange: 'Binance', pair: 'BTCUSDT', type: 'short', size: '0.6375', entryPrice: 59052.1, currentPrice: 59049.8, profit: 0.87, profitPercentage: 0.02, leverage: '5x' },
   ]);
 
   const [botStatus, setBotStatus] = useState({
@@ -37,9 +39,18 @@ const Dashboard = () => {
     }));
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <Button onClick={toggleTheme} variant="outline" size="icon">
+          {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+        </Button>
+      </div>
       
       <Card className="mb-4">
         <CardHeader>
@@ -55,7 +66,7 @@ const Dashboard = () => {
                 <TableHead>Market Price</TableHead>
                 <TableHead>PNL (USDT)</TableHead>
                 <TableHead>PNL (%)</TableHead>
-                <TableHead>Margin</TableHead>
+                <TableHead>Leverage</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -74,7 +85,7 @@ const Dashboard = () => {
                   <TableCell className={trade.profitPercentage >= 0 ? 'text-green-500' : 'text-red-500'}>
                     {trade.profitPercentage.toFixed(2)}%
                   </TableCell>
-                  <TableCell>{trade.margin.toFixed(2)}</TableCell>
+                  <TableCell>{trade.leverage}</TableCell>
                   <TableCell>
                     <Button onClick={() => handleCloseTrade(trade.id)} variant="destructive" size="sm">Close</Button>
                   </TableCell>
