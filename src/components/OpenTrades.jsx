@@ -55,6 +55,7 @@ const OpenTrades = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Symbol</TableHead>
+              <TableHead>Exchange</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Entry Price</TableHead>
               <TableHead>Market Price</TableHead>
@@ -70,6 +71,7 @@ const OpenTrades = () => {
                 <TableCell className={trade.type === 'long' ? 'text-green-500' : 'text-red-500'}>
                   {trade.pair} {trade.type.toUpperCase()}
                 </TableCell>
+                <TableCell>{trade.exchange}</TableCell>
                 <TableCell>{trade.size}</TableCell>
                 <TableCell>{trade.entryPrice.toFixed(1)}</TableCell>
                 <TableCell>{trade.currentPrice.toFixed(1)}</TableCell>
