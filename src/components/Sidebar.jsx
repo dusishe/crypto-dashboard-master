@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import { Button } from "@/components/ui/button";
-import { HomeIcon, KeyIcon, SettingsIcon, BarChartIcon, ChevronRight, ChevronLeft } from "lucide-react";
+import { HomeIcon, KeyIcon, SettingsIcon, BarChartIcon, ChevronRight, ChevronLeft, Sun, Moon, LogOut } from "lucide-react";
+import { navItems } from '../nav-items';
 
 const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = React.useState(true);
+  const { theme, setTheme } = useTheme();
 
-  const menuItems = [
-    { icon: <HomeIcon className="h-5 w-5" />, label: 'Dashboard', path: '/dashboard' },
-    { icon: <KeyIcon className="h-5 w-5" />, label: 'API Keys', path: '/api-keys' },
-    { icon: <SettingsIcon className="h-5 w-5" />, label: 'Account Settings', path: '/account-settings' },
-    { icon: <BarChartIcon className="h-5 w-5" />, label: 'Statistics', path: '/statistics' },
-  ];
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  const handleLogout = () => {
+    // TODO: Implement logout logic
+    console.log('Logging out');
+  };
 
   return (
-    <div className={`bg-gray-800 text-white h-screen ${isExpanded ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out`}>
-      <div className="p-4">
+    <div className={`bg-gray-800 dark:bg-gray-900 text-white h-screen ${isExpanded ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out flex flex-col`}>
+      <div className="p-4 flex-grow">
         <Button
           variant="ghost"
           size="icon"
@@ -24,17 +29,27 @@ const Sidebar = () => {
         >
           {isExpanded ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
         </Button>
-        {menuItems.map((item, index) => (
-          <Link key={index} to={item.path}>
+        {navItems.map((item, index) => (
+          <Link key={index} to={item.to}>
             <Button
               variant="ghost"
               className={`w-full justify-start mb-2 ${isExpanded ? 'px-4' : 'px-2'}`}
             >
               {item.icon}
-              {isExpanded && <span className="ml-2">{item.label}</span>}
+              {isExpanded && <span className="ml-2">{item.title}</span>}
             </Button>
           </Link>
         ))}
+      </div>
+      <div className="p-4">
+        <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start mb-2">
+          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          {isExpanded && <span className="ml-2">Toggle Theme</span>}
+        </Button>
+        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start mb-2">
+          <LogOut className="h-5 w-5" />
+          {isExpanded && <span className="ml-2">Logout</span>}
+        </Button>
       </div>
     </div>
   );

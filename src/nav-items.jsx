@@ -4,6 +4,7 @@ import ApiKeys from "./pages/ApiKeys.jsx";
 import TelegramSettings from "./pages/TelegramSettings.jsx";
 import AccountSettings from "./pages/AccountSettings.jsx";
 import Statistics from "./pages/Statistics.jsx";
+import TradingSignals from "./pages/TradingSignals.jsx";
 import Login from "./pages/Login.jsx";
 
 /**
@@ -39,6 +40,12 @@ export const navItems = [
     to: "/statistics",
     icon: <BarChartIcon className="h-4 w-4" />,
     page: <Statistics />,
+  },
+  {
+    title: "Trading Signals",
+    to: "/trading-signals",
+    icon: <BarChartIcon className="h-4 w-4" />,
+    page: <TradingSignals />,
   },
 ];
 

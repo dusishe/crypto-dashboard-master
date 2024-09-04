@@ -4,23 +4,59 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 const ApiKeys = () => {
   const [apiKeys, setApiKeys] = useState([
-    { id: 1, exchange: 'Binance', key: 'abc123def456', secret: '********', password: '********', mode: 'demo' },
-    { id: 2, exchange: 'Coinbase', key: 'xyz789uvw012', secret: '********', password: null, mode: 'live' },
+    { id: 1, exchange: 'Binance', key: 'abc123def456', secret: '********', password: '********', status: 'active' },
+    { id: 2, exchange: 'Coinbase', key: 'xyz789uvw012', secret: '********', password: null, status: 'inactive' },
   ]);
-  const [newKey, setNewKey] = useState({ exchange: '', key: '', secret: '', password: '', mode: 'demo' });
+  const [newKey, setNewKey] = useState({ exchange: '', key: '', secret: '', password: '' });
 
   const exchanges = ['Binance', 'Coinbase', 'Kraken', 'Bitfinex'];
 
   const addApiKey = () => {
-    setApiKeys([...apiKeys, { ...newKey, id: Date.now() }]);
-    setNewKey({ exchange: '', key: '', secret: '', password: '', mode: 'demo' });
+    const existingActiveKey = apiKeys.find(key => key.exchange === newKey.exchange && key.status === 'active');
+    if (existingActiveKey) {
+      alert(`There's already an active key for ${newKey.exchange}. Please deactivate it first.`);
+      return;
+    }
+    setApiKeys([...apiKeys, { ...newKey, id: Date.now(), status: 'active' }]);
+    setNewKey({ exchange: '', key: '', secret: '', password: '' });
+  };
+
+  const toggleKeyStatus = (id) => {
+    setApiKeys(apiKeys.map(key => {
+      if (key.id === id) {
+        const newStatus = key.status === 'active' ? 'inactive' : 'active';
+        if (newStatus === 'active') {
+          const existingActiveKey = apiKeys.find(k => k.exchange === key.exchange && k.status === 'active');
+          if (existingActiveKey) {
+            alert(`There's already an active key for ${key.exchange}. Please deactivate it first.`);
+            return key;
+          }
+        }
+        return { ...key, status: newStatus };
+      }
+      return key;
+    }));
   };
 
   const removeApiKey = (id) => {
     setApiKeys(apiKeys.filter(key => key.id !== id));
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-500">Active</Badge>;
+      case 'inactive':
+        return <Badge className="bg-gray-500">Inactive</Badge>;
+      case 'error':
+        return <Badge className="bg-red-500">Error</Badge>;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -63,18 +99,6 @@ const ApiKeys = () => {
               value={newKey.password}
               onChange={(e) => setNewKey({...newKey, password: e.target.value})}
             />
-            <Select
-              value={newKey.mode}
-              onValueChange={(value) => setNewKey({...newKey, mode: value})}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select mode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="demo">Demo</SelectItem>
-                <SelectItem value="live">Live</SelectItem>
-              </SelectContent>
-            </Select>
             <Button onClick={addApiKey}>Add API Key</Button>
           </div>
         </CardContent>
@@ -92,8 +116,8 @@ const ApiKeys = () => {
                 <TableHead>API Key</TableHead>
                 <TableHead>API Secret</TableHead>
                 <TableHead>Password</TableHead>
-                <TableHead>Mode</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -103,8 +127,11 @@ const ApiKeys = () => {
                   <TableCell>{key.key.substring(0, 4)}...{key.key.substring(key.key.length - 4)}</TableCell>
                   <TableCell>********</TableCell>
                   <TableCell>{key.password ? '********' : 'N/A'}</TableCell>
-                  <TableCell>{key.mode}</TableCell>
+                  <TableCell>{getStatusBadge(key.status)}</TableCell>
                   <TableCell>
+                    <Button onClick={() => toggleKeyStatus(key.id)} variant="outline" size="sm" className="mr-2">
+                      {key.status === 'active' ? 'Deactivate' : 'Activate'}
+                    </Button>
                     <Button onClick={() => removeApiKey(key.id)} variant="destructive" size="sm">Remove</Button>
                   </TableCell>
                 </TableRow>
