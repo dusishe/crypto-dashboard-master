@@ -18,7 +18,7 @@ const App = () => {
           <BrowserRouter>
             <div className="flex">
               <Sidebar />
-              <div className="flex-1">
+              <div className="flex-1 ml-64 p-4 overflow-y-auto h-screen">
                 <Routes>
                   <Route path={loginRoute.to} element={loginRoute.page} />
                   {navItems.map(({ to, page }) => (

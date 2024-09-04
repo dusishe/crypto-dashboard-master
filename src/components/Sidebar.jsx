@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from 'next-themes';
 import { Button } from "@/components/ui/button";
-import { HomeIcon, KeyIcon, SettingsIcon, BarChartIcon, ChevronRight, ChevronLeft, Sun, Moon, LogOut } from "lucide-react";
+import { Sun, Moon, LogOut } from "lucide-react";
 import { navItems } from '../nav-items';
 
 const Sidebar = () => {
@@ -19,15 +19,15 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`bg-gray-800 dark:bg-gray-900 text-white h-screen ${isExpanded ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out flex flex-col`}>
-      <div className="p-4 flex-grow">
+    <div className={`fixed left-0 top-0 h-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white ${isExpanded ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out flex flex-col`}>
+      <div className="p-4 flex-grow overflow-y-auto">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsExpanded(!isExpanded)}
           className="mb-4 w-full flex justify-end"
         >
-          {isExpanded ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
+          {isExpanded ? '←' : '→'}
         </Button>
         {navItems.map((item, index) => (
           <Link key={index} to={item.to}>

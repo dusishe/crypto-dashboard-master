@@ -16,8 +16,7 @@ const ApiKeys = () => {
   const exchanges = ['Binance', 'Coinbase', 'Kraken', 'Bitfinex'];
 
   const addApiKey = () => {
-    const existingActiveKey = apiKeys.find(key => key.exchange === newKey.exchange && key.status === 'active');
-    if (existingActiveKey) {
+    if (apiKeys.some(key => key.exchange === newKey.exchange && key.status === 'active')) {
       alert(`There's already an active key for ${newKey.exchange}. Please deactivate it first.`);
       return;
     }
@@ -29,12 +28,9 @@ const ApiKeys = () => {
     setApiKeys(apiKeys.map(key => {
       if (key.id === id) {
         const newStatus = key.status === 'active' ? 'inactive' : 'active';
-        if (newStatus === 'active') {
-          const existingActiveKey = apiKeys.find(k => k.exchange === key.exchange && k.status === 'active');
-          if (existingActiveKey) {
-            alert(`There's already an active key for ${key.exchange}. Please deactivate it first.`);
-            return key;
-          }
+        if (newStatus === 'active' && apiKeys.some(k => k.exchange === key.exchange && k.status === 'active')) {
+          alert(`There's already an active key for ${key.exchange}. Please deactivate it first.`);
+          return key;
         }
         return { ...key, status: newStatus };
       }
@@ -60,45 +56,26 @@ const ApiKeys = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Manage API Keys</h1>
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold">Manage API Keys</h1>
       
-      <Card className="mb-4">
+      <Card>
         <CardHeader>
           <CardTitle>Add New API Key</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <Select
-              value={newKey.exchange}
-              onValueChange={(value) => setNewKey({...newKey, exchange: value})}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select exchange" />
-              </SelectTrigger>
+            <Select value={newKey.exchange} onValueChange={(value) => setNewKey({...newKey, exchange: value})}>
+              <SelectTrigger><SelectValue placeholder="Select exchange" /></SelectTrigger>
               <SelectContent>
                 {exchanges.map((exchange) => (
                   <SelectItem key={exchange} value={exchange}>{exchange}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Input
-              placeholder="API Key"
-              value={newKey.key}
-              onChange={(e) => setNewKey({...newKey, key: e.target.value})}
-            />
-            <Input
-              placeholder="API Secret"
-              type="password"
-              value={newKey.secret}
-              onChange={(e) => setNewKey({...newKey, secret: e.target.value})}
-            />
-            <Input
-              placeholder="Password (optional)"
-              type="password"
-              value={newKey.password}
-              onChange={(e) => setNewKey({...newKey, password: e.target.value})}
-            />
+            <Input placeholder="API Key" value={newKey.key} onChange={(e) => setNewKey({...newKey, key: e.target.value})} />
+            <Input placeholder="API Secret" type="password" value={newKey.secret} onChange={(e) => setNewKey({...newKey, secret: e.target.value})} />
+            <Input placeholder="Password (optional)" type="password" value={newKey.password} onChange={(e) => setNewKey({...newKey, password: e.target.value})} />
             <Button onClick={addApiKey}>Add API Key</Button>
           </div>
         </CardContent>
