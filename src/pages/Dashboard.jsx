@@ -10,6 +10,15 @@ const Dashboard = () => {
       
       <BotStatus />
       <OpenTrades />
+
+      <style jsx global>{`
+        .btn-hover-effect {
+          transition: background-color 0.3s ease;
+        }
+        .btn-hover-effect:hover {
+          filter: brightness(110%);
+        }
+      `}</style>
     </div>
   );
 };

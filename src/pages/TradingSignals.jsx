@@ -22,14 +22,14 @@ const TradingSignals = () => {
     refetchInterval: 60000, // Refetch every minute
   });
 
-  const getRecommendationColor = (recommendation) => {
+  const getRecommendationStyle = (recommendation) => {
     switch (recommendation) {
-      case 'strong_buy': return 'bg-green-500';
-      case 'buy': return 'bg-green-300';
-      case 'neutral': return 'bg-gray-300';
-      case 'sell': return 'bg-red-300';
-      case 'strong_sell': return 'bg-red-500';
-      default: return 'bg-gray-300';
+      case 'strong_buy': return 'font-bold text-green-600 dark:text-green-400';
+      case 'buy': return 'text-green-600 dark:text-green-400';
+      case 'neutral': return 'text-black dark:text-white';
+      case 'sell': return 'text-red-600 dark:text-red-400';
+      case 'strong_sell': return 'font-bold text-red-600 dark:text-red-400';
+      default: return 'text-black dark:text-white';
     }
   };
 
@@ -63,7 +63,7 @@ const TradingSignals = () => {
                   <TableCell>{signal.exchange}</TableCell>
                   <TableCell>{signal.ticker}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded ${getRecommendationColor(signal.recommendation)} text-white`}>
+                    <span className={getRecommendationStyle(signal.recommendation)}>
                       {getRecommendationText(signal.recommendation)}
                     </span>
                   </TableCell>
