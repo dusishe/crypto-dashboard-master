@@ -1,7 +1,6 @@
-import { HomeIcon, KeyIcon, SettingsIcon, BarChartIcon, MessageSquareIcon } from "lucide-react";
+import { HomeIcon, KeyIcon, SettingsIcon, BarChartIcon, LineChartIcon } from "lucide-react";
 import Dashboard from "./pages/Dashboard.jsx";
 import ApiKeys from "./pages/ApiKeys.jsx";
-import TelegramSettings from "./pages/TelegramSettings.jsx";
 import AccountSettings from "./pages/AccountSettings.jsx";
 import Statistics from "./pages/Statistics.jsx";
 import TradingSignals from "./pages/TradingSignals.jsx";
@@ -24,12 +23,6 @@ export const navItems = [
     page: <ApiKeys />,
   },
   {
-    title: "Telegram Settings",
-    to: "/telegram-settings",
-    icon: <MessageSquareIcon className="h-4 w-4" />,
-    page: <TelegramSettings />,
-  },
-  {
     title: "Account Settings",
     to: "/account-settings",
     icon: <SettingsIcon className="h-4 w-4" />,
@@ -44,7 +37,7 @@ export const navItems = [
   {
     title: "Trading Signals",
     to: "/trading-signals",
-    icon: <BarChartIcon className="h-4 w-4" />,
+    icon: <LineChartIcon className="h-4 w-4" />,
     page: <TradingSignals />,
   },
 ];
