@@ -21,13 +21,13 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`fixed left-0 top-0 h-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white ${isExpanded ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out flex flex-col`}>
+    <div className={`fixed left-0 top-0 h-full bg-gray-900 text-white ${isExpanded ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out flex flex-col`}>
       <div className="p-4 flex-grow overflow-y-auto">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="mb-4 w-full flex justify-end"
+          className="mb-4 w-full flex justify-end text-white hover:text-gray-300"
         >
           {isExpanded ? '←' : '→'}
         </Button>
@@ -35,7 +35,7 @@ const Sidebar = () => {
           <Link key={index} to={item.to}>
             <Button
               variant="ghost"
-              className={`w-full justify-start mb-2 ${isExpanded ? 'px-4' : 'px-2'}`}
+              className={`w-full justify-start mb-2 ${isExpanded ? 'px-4' : 'px-2'} text-white hover:text-gray-300 hover:bg-gray-800`}
             >
               {item.icon}
               {isExpanded && <span className="ml-2">{item.title}</span>}
@@ -44,11 +44,11 @@ const Sidebar = () => {
         ))}
       </div>
       <div className="p-4">
-        <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start mb-2">
+        <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start mb-2 text-white hover:text-gray-300 hover:bg-gray-800">
           {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           {isExpanded && <span className="ml-2">Toggle Theme</span>}
         </Button>
-        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start mb-2">
+        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start mb-2 text-white hover:text-gray-300 hover:bg-gray-800">
           <LogOut className="h-5 w-5" />
           {isExpanded && <span className="ml-2">Logout</span>}
         </Button>
