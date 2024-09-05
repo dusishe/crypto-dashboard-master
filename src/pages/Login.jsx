@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // TODO: Implement actual login logic here
-    console.log('Login attempt with:', username, password);
-    // For now, we'll just redirect to the dashboard
+    login(username, password);
     navigate('/dashboard');
   };
 
