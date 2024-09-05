@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,15 +17,12 @@ const PrivateRoute = ({ children }) => {
 };
 
 const AppContent = () => {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const { isAuthenticated } = useAuth();
 
   return (
     <div className="flex flex-col md:flex-row">
-      {isAuthenticated && (
-        <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
-      )}
-      <div className={`flex-1 p-4 ${isAuthenticated ? (isSidebarExpanded ? 'md:ml-64' : 'md:ml-20') : ''} transition-all duration-300 ease-in-out overflow-y-auto min-h-screen`}>
+      {isAuthenticated && <Sidebar />}
+      <div className={`flex-1 p-4 ${isAuthenticated ? 'md:ml-64' : ''} transition-all duration-300 ease-in-out overflow-y-auto min-h-screen`}>
         <Routes>
           <Route path={loginRoute.to} element={<Login />} />
           {navItems.map(({ to, page }) => (
