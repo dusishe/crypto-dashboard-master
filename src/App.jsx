@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from 'next-themes';
 import { navItems } from "./nav-items";
 import Sidebar from './components/Sidebar';
+import Login from './pages/Login';
 import axios from 'axios';
 
 const queryClient = new QueryClient();
@@ -22,10 +23,11 @@ const AppContent = () => {
       <Sidebar />
       <div className="flex-1 p-4 md:ml-64 transition-all duration-300 ease-in-out overflow-y-auto min-h-screen">
         <Routes>
+          <Route path="/login" element={<Login />} />
           {navItems.map(({ to, page }) => (
             <Route key={to} path={to} element={page} />
           ))}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
     </div>
