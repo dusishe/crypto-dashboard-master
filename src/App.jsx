@@ -6,8 +6,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from 'next-themes';
 import { navItems } from "./nav-items";
 import Sidebar from './components/Sidebar';
+import axios from 'axios';
 
 const queryClient = new QueryClient();
+
+// Create an axios instance
+export const api = axios.create({
+  baseURL: 'http://localhost:8000/api/', // Adjust this to your Django backend URL
+  withCredentials: true, // This is important for handling authentication cookies
+});
 
 const AppContent = () => {
   return (

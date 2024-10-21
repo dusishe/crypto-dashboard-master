@@ -1,20 +1,27 @@
 import React from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Square } from 'lucide-react';
+import { api } from '../App';
 
 const BotStatus = () => {
-  const [botStatus, setBotStatus] = React.useState({
-    Binance: true,
-    Coinbase: false,
+  const queryClient = useQueryClient();
+
+  const { data: botStatus, isLoading, error } = useQuery({
+    queryKey: ['botStatus'],
+    queryFn: () => api.get('bot-status/').then(res => res.data),
   });
 
-  const toggleBotStatus = (exchange) => {
-    setBotStatus(prevStatus => ({
-      ...prevStatus,
-      [exchange]: !prevStatus[exchange]
-    }));
-  };
+  const toggleBotMutation = useMutation({
+    mutationFn: (exchange) => api.post(`bot-toggle/${exchange}/`),
+    onSuccess: () => {
+      queryClient.invalidateQueries('botStatus');
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <Card className="mb-4">
@@ -29,7 +36,7 @@ const BotStatus = () => {
               <span>{exchange}: {status ? 'Running' : 'Stopped'}</span>
             </div>
             <Button
-              onClick={() => toggleBotStatus(exchange)}
+              onClick={() => toggleBotMutation.mutate(exchange)}
               variant={status ? 'destructive' : 'default'}
               className={status ? 'bg-red-500' : 'bg-green-500'}
             >
